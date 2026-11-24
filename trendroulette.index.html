@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Trendroulette — 15 megatrends</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #202138;
+      background: #f7f7fb;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-width: 280px;
+      min-height: 100vh;
+      margin: 0;
+      background:
+        radial-gradient(circle at 8% 4%, #d8f8f1 0, transparent 27rem),
+        radial-gradient(circle at 96% 13%, #f8dcf2 0, transparent 28rem),
+        #f7f7fb;
+    }
+
+    button { font: inherit; }
+
+    .page {
+      width: min(1250px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: clamp(28px, 5vw, 64px) 0 42px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin: 0 0 14px;
+      color: #6647aa;
+      font-size: .75rem;
+      font-weight: 800;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #b565ed;
+      content: "";
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.6rem, 5.4vw, 5rem);
+      line-height: 1.04;
+      letter-spacing: -.055em;
+    }
+
+    h1 span { color: #8e52dc; }
+
+    .intro {
+      max-width: 64ch;
+      margin: 15px 0 30px;
+      color: #606277;
+      font-size: clamp(.96rem, 1.4vw, 1.08rem);
+      line-height: 1.6;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.06fr) minmax(340px, .94fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .panel {
+      border: 1px solid #e9e7f0;
+      border-radius: 28px;
+      background: rgba(255, 255, 255, .92);
+      box-shadow: 0 18px 55px rgba(54, 43, 86, .075);
+    }
+
+    .wheel-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: clamp(22px, 3vw, 38px);
+    }
+
+    .panel-title {
+      align-self: flex-start;
+      margin: 0 0 8px;
+      font-size: 1.08rem;
+      font-weight: 800;
+      letter-spacing: -.025em;
+    }
+
+    .wheel-wrap {
+      position: relative;
+      width: min(100%, 520px);
+      aspect-ratio: 1;
+      margin: 13px auto 22px;
+      padding: 10px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 11px 25px rgba(54, 43, 86, .13), inset 0 0 0 1px #e7e5ed;
+    }
+
+    .wheel {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      border-radius: 50%;
+      background: #ddd;
+      box-shadow: inset 0 0 0 4px rgba(255,255,255,.8);
+      transition: transform 5.4s cubic-bezier(.14,.83,.13,1);
+      will-change: transform;
+    }
+
+    .wheel::after {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: radial-gradient(circle, transparent 55%, rgba(42,26,83,.13) 100%);
+      content: "";
+      pointer-events: none;
+    }
+
+    .wheel-number {
+      position: absolute;
+      display: grid;
+      width: clamp(27px, 5vw, 43px);
+      aspect-ratio: 1;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,.7);
+      border-radius: 50%;
+      color: #242139;
+      background: rgba(255,255,255,.88);
+      box-shadow: 0 3px 7px rgba(30,20,58,.15);
+      font-size: clamp(.75rem, 1.5vw, 1rem);
+      font-weight: 900;
+      line-height: 1;
+      transform: translate(-50%, -50%);
+    }
+
+    .hub {
+      position: absolute;
+      z-index: 2;
+      top: 50%;
+      left: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 27%;
+      aspect-ratio: 1;
+      border: 7px solid white;
+      border-radius: 50%;
+      color: #fff;
+      background: #25223f;
+      box-shadow: 0 7px 20px rgba(23, 18, 55, .28);
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .hub strong { font-size: clamp(1.6rem, 4vw, 2.7rem); line-height: 1; }
+    .hub small { margin-top: 3px; font-size: clamp(.45rem, 1vw, .7rem); font-weight: 800; letter-spacing: .11em; }
+
+    .pointer {
+      position: absolute;
+      z-index: 3;
+      top: 0;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-right: 19px solid transparent;
+      border-left: 19px solid transparent;
+      border-top: 37px solid #25223f;
+      filter: drop-shadow(0 3px 2px rgba(25,20,55,.28));
+      transform: translate(-50%, -5px);
+    }
+
+    .spin-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 11px;
+      min-height: 56px;
+      padding: 0 30px;
+      border: 0;
+      border-radius: 16px;
+      color: white;
+      background: #28213f;
+      box-shadow: 0 9px 20px rgba(40,33,63,.22);
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background .2s, transform .2s, box-shadow .2s;
+    }
+
+    .spin-button:hover:not(:disabled) { background: #6142a0; transform: translateY(-2px); box-shadow: 0 12px 22px rgba(70,42,130,.25); }
+    .spin-button:active:not(:disabled) { transform: translateY(0); }
+    .spin-button:disabled { cursor: wait; opacity: .68; }
+    .spin-button:focus-visible, .trend:focus-visible { outline: 3px solid #7454dc; outline-offset: 4px; }
+
+    .spin-icon { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; }
+    .hint { margin: 14px 0 0; color: #79798b; font-size: .84rem; text-align: center; }
+
+    .side { display: grid; gap: 20px; }
+
+    .result {
+      min-height: 190px;
+      padding: 27px 30px;
+      background: linear-gradient(135deg, #25223f, #493778);
+      color: #fff;
+    }
+
+    .result-label {
+      margin: 0 0 16px;
+      color: #d8cafa;
+      font-size: .75rem;
+      font-weight: 800;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .result-main { display: flex; align-items: center; gap: 15px; }
+    .result-badge { flex: none; display: grid; width: 52px; height: 52px; place-items: center; border-radius: 15px; background: rgba(255,255,255,.17); font-size: 1.15rem; font-weight: 900; }
+    .result-name { margin: 0; font-size: clamp(1.4rem, 2.5vw, 2rem); line-height: 1.15; letter-spacing: -.035em; }
+    .result-help { margin: 14px 0 0; color: #ded7ef; font-size: .9rem; line-height: 1.5; }
+
+    .list-panel { padding: 25px 27px 27px; }
+    .list-heading { margin: 0 0 18px; font-size: 1.16rem; letter-spacing: -.025em; }
+    .trend-list { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 7px 12px; margin: 0; padding: 0; list-style: none; }
+    .trend {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-width: 0;
+      padding: 7px 8px;
+      border-radius: 11px;
+      font-size: .78rem;
+      font-weight: 750;
+      line-height: 1.25;
+      transition: background .25s, box-shadow .25s;
+    }
+    .trend.active { background: #f1eafd; box-shadow: inset 0 0 0 1px #dcc9fa; }
+    .trend-dot { flex: none; display: grid; width: 27px; height: 27px; place-items: center; border-radius: 8px; background: var(--color); color: #242139; font-size: .68rem; font-weight: 900; }
+    .trend-name { overflow-wrap: anywhere; }
+
+    .footer { margin: 22px 0 0; color: #8b8996; font-size: .76rem; text-align: center; }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .side { grid-template-columns: minmax(0,.8fr) minmax(0,1.2fr); align-items: start; }
+      .wheel-wrap { max-width: 540px; }
+    }
+
+    @media (max-width: 680px) {
+      .page { width: min(100% - 24px, 500px); padding-top: 28px; }
+      .intro { margin-bottom: 22px; }
+      .panel { border-radius: 22px; }
+      .wheel-panel { padding: 20px 16px 23px; }
+      .wheel-wrap { margin: 12px auto 20px; }
+      .side { grid-template-columns: 1fr; gap: 14px; }
+      .result { min-height: 0; padding: 24px; }
+      .list-panel { padding: 23px 18px; }
+      .trend-list { gap: 5px 6px; }
+      .trend { gap: 6px; padding: 6px 4px; font-size: .72rem; }
+      .trend-dot { width: 24px; height: 24px; border-radius: 7px; }
+    }
+
+    @media (max-width: 355px) {
+      .trend-list { grid-template-columns: 1fr; }
+      .trend { font-size: .82rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; }
+      .wheel { transition-duration: .08s; }
+      .spin-button, .trend { transition-duration: .08s; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <p class="eyebrow">15 megatrends · 1 willekeurige keuze</p>
+    <h1>Trend<span>roulette</span></h1>
+    <p class="intro">Laat het rad beslissen. Draai en ontdek welke megatrend jouw volgende gesprek, opdracht of idee in gang zet.</p>
+
+    <div class="layout">
+      <section class="panel wheel-panel" aria-labelledby="wheel-title">
+        <h2 class="panel-title" id="wheel-title">Draai voor een trend</h2>
+        <div class="wheel-wrap">
+          <div class="pointer" aria-hidden="true"></div>
+          <div class="wheel" id="wheel" role="img" aria-label="Rouletterad met 15 genummerde megatrends"></div>
+          <div class="hub" aria-hidden="true"><strong>15</strong><small>TRENDS</small></div>
+        </div>
+        <button class="spin-button" id="spin" type="button">
+          <svg class="spin-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 1-2.2-5.5M20 4v5h-5"/></svg>
+          <span id="spin-label">Draai het rad</span>
+        </button>
+        <p class="hint">Elke draai kiest willekeurig één van de 15 trends.</p>
+      </section>
+
+      <div class="side">
+        <section class="panel result" aria-labelledby="result-title" aria-live="polite" aria-atomic="true">
+          <p class="result-label" id="result-title">Jouw megatrend</p>
+          <div class="result-main">
+            <span class="result-badge" id="result-number" aria-hidden="true">?</span>
+            <h2 class="result-name" id="result-name">Klaar om te draaien?</h2>
+          </div>
+          <p class="result-help" id="result-help">Druk op de knop en laat het rad een trend voor je kiezen.</p>
+        </section>
+
+        <section class="panel list-panel" aria-labelledby="list-title">
+          <h2 class="list-heading" id="list-title">Alle megatrends</h2>
+          <ol class="trend-list" id="trend-list"></ol>
+        </section>
+      </div>
+    </div>
+    <p class="footer">Gebaseerd op de 15 megatrends in de aangeleverde screenshot.</p>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const trends = [
+        "Age of Healing", "Aided by AI", "Behavi-our",
+        "Brand Beings", "Creator Inc.", "For You",
+        "Freedomism", "Glass Box Brands", "Joynning",
+        "Metaphysical", "Power to the People", "Precareious",
+        "Solace as a Service", "State of Place", "Unconsumed"
+      ];
+      const colors = [
+        "#66d6bb", "#9bd479", "#e1d873", "#f4bc55", "#ffa56d",
+        "#fb8283", "#f371a0", "#ef7fca", "#e68bf0", "#ce79ed",
+        "#b083f4", "#9986f5", "#75a8f7", "#61c3f6", "#64d9df"
+      ];
+      const slice = 360 / trends.length;
+      const wheel = document.getElementById("wheel");
+      const list = document.getElementById("trend-list");
+      const button = document.getElementById("spin");
+      const buttonLabel = document.getElementById("spin-label");
+      const resultNumber = document.getElementById("result-number");
+      const resultName = document.getElementById("result-name");
+      const resultHelp = document.getElementById("result-help");
+
+      const stops = colors.map((color, index) => {
+        const start = index * slice;
+        const end = (index + 1) * slice;
+        return `${color} ${start}deg ${end - .8}deg, #fff ${end - .8}deg ${end}deg`;
+      });
+      wheel.style.background = `conic-gradient(from -${slice / 2}deg, ${stops.join(", ")})`;
+
+      trends.forEach((name, index) => {
+        const angle = index * slice * Math.PI / 180;
+        const number = document.createElement("span");
+        number.className = "wheel-number";
+        number.textContent = String(index + 1).padStart(2, "0");
+        number.style.left = `${50 + 36 * Math.sin(angle)}%`;
+        number.style.top = `${50 - 36 * Math.cos(angle)}%`;
+        number.setAttribute("aria-hidden", "true");
+        wheel.append(number);
+
+        const item = document.createElement("li");
+        item.className = "trend";
+        item.style.setProperty("--color", colors[index]);
+        const dot = document.createElement("span");
+        dot.className = "trend-dot";
+        dot.textContent = String(index + 1).padStart(2, "0");
+        dot.setAttribute("aria-hidden", "true");
+        const label = document.createElement("span");
+        label.className = "trend-name";
+        label.textContent = name;
+        item.append(dot, label);
+        list.append(item);
+      });
+
+      let rotation = 0;
+      let selected = null;
+      let spinning = false;
+
+      function randomIndex(max) {
+        if (!window.crypto || !window.crypto.getRandomValues) return Math.floor(Math.random() * max);
+        const limit = Math.floor(0x100000000 / max) * max;
+        const value = new Uint32Array(1);
+        do { window.crypto.getRandomValues(value); } while (value[0] >= limit);
+        return value[0] % max;
+      }
+
+      function finishSpin() {
+        if (!spinning || selected === null) return;
+        spinning = false;
+        const name = trends[selected];
+        resultNumber.textContent = String(selected + 1).padStart(2, "0");
+        resultNumber.style.background = colors[selected];
+        resultNumber.style.color = "#242139";
+        resultName.textContent = name;
+        resultHelp.textContent = "Draai gerust opnieuw voor een andere willekeurige keuze.";
+        list.children[selected].classList.add("active");
+        wheel.setAttribute("aria-label", `Rouletterad: de wijzer staat op nummer ${selected + 1}, ${name}`);
+        button.disabled = false;
+        buttonLabel.textContent = "Draai opnieuw";
+      }
+
+      button.addEventListener("click", () => {
+        if (spinning) return;
+        spinning = true;
+        if (selected !== null) list.children[selected].classList.remove("active");
+        selected = randomIndex(trends.length);
+        button.disabled = true;
+        buttonLabel.textContent = "Het rad draait…";
+        resultNumber.textContent = "…";
+        resultNumber.style.background = "rgba(255,255,255,.17)";
+        resultNumber.style.color = "#fff";
+        resultName.textContent = "Het rad draait…";
+        resultHelp.textContent = "Even geduld: de wijzer komt zo tot stilstand.";
+
+        const normalized = ((rotation % 360) + 360) % 360;
+        const target = ((-selected * slice - normalized) % 360 + 360) % 360;
+        rotation += 360 * 6 + target;
+        wheel.style.transform = `rotate(${rotation}deg)`;
+      });
+
+      wheel.addEventListener("transitionend", event => {
+        if (event.propertyName === "transform") finishSpin();
+      });
+    })();
+  </script>
+</body>
+</html>
